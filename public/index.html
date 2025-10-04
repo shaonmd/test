@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel Management System</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-hotel me-2"></i>
+                Hotel Management System
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showDashboard()">
+                            <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showRooms()">
+                            <i class="fas fa-bed me-1"></i>Rooms
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showBookings()">
+                            <i class="fas fa-calendar-check me-1"></i>Bookings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showGuests()">
+                            <i class="fas fa-users me-1"></i>Guests
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showPayments()">
+                            <i class="fas fa-credit-card me-1"></i>Payments
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" onclick="showReports()">
+                            <i class="fas fa-chart-bar me-1"></i>Reports
+                        </a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-user-circle me-1"></i>
+                            <span id="userName">User</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" onclick="showProfile()">
+                                <i class="fas fa-user me-1"></i>Profile
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" onclick="logout()">
+                                <i class="fas fa-sign-out-alt me-1"></i>Logout
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login to Hotel Management System
+                    </h5>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="loginEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="loginEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="loginPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-sign-in-alt me-1"></i>Login
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container-fluid mt-4">
+        <!-- Dashboard Content -->
+        <div id="dashboardContent" class="content-section">
+            <div class="row">
+                <div class="col-12">
+                    <h2><i class="fas fa-tachometer-alt me-2"></i>Dashboard</h2>
+                    <hr>
+                </div>
+            </div>
+            <div class="row" id="dashboardStats">
+                <!-- Stats will be loaded here -->
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-calendar-check me-1"></i>Today's Check-ins</h5>
+                        </div>
+                        <div class="card-body" id="todaysCheckIns">
+                            <!-- Check-ins will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5><i class="fas fa-calendar-times me-1"></i>Today's Check-outs</h5>
+                        </div>
+                        <div class="card-body" id="todaysCheckOuts">
+                            <!-- Check-outs will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Rooms Content -->
+        <div id="roomsContent" class="content-section" style="display: none;">
+            <div class="row">
+                <div class="col-12">
+                    <h2><i class="fas fa-bed me-2"></i>Room Management</h2>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <button class="btn btn-primary" onclick="showAddRoomModal()">
+                            <i class="fas fa-plus me-1"></i>Add Room
+                        </button>
+                        <div class="d-flex gap-2">
+                            <select class="form-select" id="roomTypeFilter" onchange="filterRooms()">
+                                <option value="">All Types</option>
+                                <option value="single">Single</option>
+                                <option value="double">Double</option>
+                                <option value="suite">Suite</option>
+                                <option value="deluxe">Deluxe</option>
+                                <option value="presidential">Presidential</option>
+                            </select>
+                            <select class="form-select" id="roomStatusFilter" onchange="filterRooms()">
+                                <option value="">All Status</option>
+                                <option value="available">Available</option>
+                                <option value="occupied">Occupied</option>
+                                <option value="maintenance">Maintenance</option>
+                                <option value="cleaning">Cleaning</option>
+                                <option value="out_of_order">Out of Order</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Room #</th>
+                                    <th>Type</th>
+                                    <th>Floor</th>
+                                    <th>Capacity</th>
+                                    <th>Price/Night</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="roomsTableBody">
+                                <!-- Rooms will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bookings Content -->
+        <div id="bookingsContent" class="content-section" style="display: none;">
+            <div class="row">
+                <div class="col-12">
+                    <h2><i class="fas fa-calendar-check me-2"></i>Booking Management</h2>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <button class="btn btn-primary" onclick="showAddBookingModal()">
+                            <i class="fas fa-plus me-1"></i>New Booking
+                        </button>
+                        <div class="d-flex gap-2">
+                            <select class="form-select" id="bookingStatusFilter" onchange="filterBookings()">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="checked_in">Checked In</option>
+                                <option value="checked_out">Checked Out</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Booking #</th>
+                                    <th>Guest</th>
+                                    <th>Room</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
+                                    <th>Status</th>
+                                    <th>Total</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="bookingsTableBody">
+                                <!-- Bookings will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guests Content -->
+        <div id="guestsContent" class="content-section" style="display: none;">
+            <div class="row">
+                <div class="col-12">
+                    <h2><i class="fas fa-users me-2"></i>Guest Management</h2>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <button class="btn btn-primary" onclick="showAddGuestModal()">
+                            <i class="fas fa-plus me-1"></i>Add Guest
+                        </button>
+                        <div class="d-flex gap-2">
+                            <input type="text" class="form-control" id="guestSearch" placeholder="Search guests..." onkeyup="searchGuests()">
+                            <select class="form-select" id="guestLoyaltyFilter" onchange="filterGuests()">
+                                <option value="">All Loyalty</option>
+                                <option value="bronze">Bronze</option>
+                                <option value="silver">Silver</option>
+                                <option value="gold">Gold</option>
+                                <option value="platinum">Platinum</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Nationality</th>
+                                    <th>Loyalty Tier</th>
+                                    <th>VIP Status</th>
+                                    <th>Total Stays</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="guestsTableBody">
+                                <!-- Guests will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Payments Content -->
+        <div id="paymentsContent" class="content-section" style="display: none;">
+            <div class="row">
+                <div class="col-12">
+                    <h2><i class="fas fa-credit-card me-2"></i>Payment Management</h2>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <button class="btn btn-primary" onclick="showAddPaymentModal()">
+                            <i class="fas fa-plus me-1"></i>Record Payment
+                        </button>
+                        <div class="d-flex gap-2">
+                            <select class="form-select" id="paymentStatusFilter" onchange="filterPayments()">
+                                <option value="">All Status</option>
+                                <option value="pending">Pending</option>
+                                <option value="completed">Completed</option>
+                                <option value="failed">Failed</option>
+                                <option value="refunded">Refunded</option>
+                            </select>
+                            <select class="form-select" id="paymentMethodFilter" onchange="filterPayments()">
+                                <option value="">All Methods</option>
+                                <option value="cash">Cash</option>
+                                <option value="credit_card">Credit Card</option>
+                                <option value="debit_card">Debit Card</option>
+                                <option value="bank_transfer">Bank Transfer</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Payment #</th>
+                                    <th>Booking #</th>
+                                    <th>Guest</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentsTableBody">
+                                <!-- Payments will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Content -->
+        <div id="reportsContent" class="content-section" style="display: none;">
+            <div class="row">
+                <div class="col-12">
+                    <h2><i class="fas fa-chart-bar me-2"></i>Reports & Analytics</h2>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-chart-line me-1"></i>Occupancy Report</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Date Range</label>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <input type="date" class="form-control" id="occupancyStartDate">
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="date" class="form-control" id="occupancyEndDate">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary w-100" onclick="generateOccupancyReport()">
+                                        Generate Report
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-dollar-sign me-1"></i>Revenue Report</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Date Range</label>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <input type="date" class="form-control" id="revenueStartDate">
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="date" class="form-control" id="revenueEndDate">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary w-100" onclick="generateRevenueReport()">
+                                        Generate Report
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5><i class="fas fa-users me-1"></i>Guest Analytics</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label class="form-label">Date Range</label>
+                                        <div class="row">
+                                            <div class="col-6">
+                                                <input type="date" class="form-control" id="guestStartDate">
+                                            </div>
+                                            <div class="col-6">
+                                                <input type="date" class="form-control" id="guestEndDate">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary w-100" onclick="generateGuestReport()">
+                                        Generate Report
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5>Report Results</h5>
+                                </div>
+                                <div class="card-body" id="reportResults">
+                                    <p class="text-muted">Select a report type and date range to generate reports.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals will be added here -->
+    <div id="modalsContainer"></div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
